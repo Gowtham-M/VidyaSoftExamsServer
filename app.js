@@ -17,12 +17,14 @@ app.use(session({
     }
   }));
 
+  const userRoutes = require('./routes/login');
+
   app.use(bodyParser.json());
+  app.use('/users', userRoutes);
 
-  const port = 6000;
+  const port = 5000;
 
 
-const shortid = require('shortid');
 
 // Use the CORS middleware
 app.use(cors());
@@ -40,7 +42,6 @@ app.use(cors({ origin: 'http://localhost:8000' }));
 const mongoURI2 = 'mongodb+srv://hitheshchm:aDpw4bk4cqJ9bzmT@cluster0.ditmjg6.mongodb.net/exam_platform';
 
 let connection1;
-let connection3;
 
 async function connectToDatabase() {
   try {
