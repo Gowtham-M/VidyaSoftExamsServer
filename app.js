@@ -17,27 +17,22 @@ app.use(session({
     }
   }));
 
-  const userRoutes = require('./routes/login');
+  app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-  app.use(bodyParser.json());
+app.use(cors({ origin: 'http://localhost:8080' }));
+
+  const userRoutes = require('./routes/login');
+  const examRoutes = require('./routes/exam');
+
   app.use('/users', userRoutes);
+  app.use('/exam', examRoutes);
 
   const port = 5000;
 
-
-
-// Use the CORS middleware
-app.use(cors());
-
 // Middleware to parse incoming form data
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-app.use(cors({ origin: 'http://localhost:8000' }));
 
 // Connect to your MongoDB Atlas cluster
-
-
 
 const mongoURI2 = 'mongodb+srv://hitheshchm:aDpw4bk4cqJ9bzmT@cluster0.ditmjg6.mongodb.net/exam_platform';
 
