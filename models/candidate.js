@@ -6,7 +6,7 @@ const destinationCandidateSchema = new Schema({
     firstName: String,
     lastName: String,
     email: String,
-    otp:String
+    otp: String
 });
 
 const DestinationCandidate = mongoose.model('Candidate', destinationCandidateSchema);

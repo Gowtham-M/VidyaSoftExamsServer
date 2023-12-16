@@ -17,6 +17,7 @@ router.get('/exam-details', async(req, res) => {
         const exam_id = req.query.exam_id;
         console.log('exam id', exam_id)
         const exam = await Exam.findOne({ exam_id })
+        console.log('exam', exam)
         if (exam) {
             res.json({ success: true, exam });
         } else {

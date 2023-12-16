@@ -24,13 +24,19 @@ router.get('/allUsers', async (req, res) => {
 
   router.post('/login', async (req, res) => {
     try {
+        console.log("req.body",req.body)
         const { exam_id, email, otp } = req.body;
+
+        console.log("exam_id",exam_id)
+        console.log("email",email)
+        console.log("otp",otp)
 
         if (!exam_id || !email || !otp) {
           return res.status(400).send({ message: 'Both exam_id and otp are required.' });
         }
 
         const user = await DestinationCandidate.findOne({ exam_id:exam_id , email, otp});
+        console.log(user)
         if (!user) {
           return res.status(401).send({ message: 'Please Check Your credentials.' });
         }
@@ -52,6 +58,7 @@ router.get('/allUsers', async (req, res) => {
 
   router.get('/current-user', async(req, res) => {
     try {
+      console.log('session', req.session.userId)
       if (req.session.email) {
         // Assuming you have a method to find a user by ID
         const user = await DestinationCandidate.findOne({user_id: req.session.userId})

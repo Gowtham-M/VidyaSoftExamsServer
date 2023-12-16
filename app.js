@@ -20,7 +20,10 @@ app.use(session({
   app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(cors({ origin: 'http://localhost:8080' }));
+app.use(cors({
+  origin: 'http://localhost:8080', // replace with the origin of your front-end
+  credentials: true
+}));
 
   const userRoutes = require('./routes/login');
   const examRoutes = require('./routes/exam');
