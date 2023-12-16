@@ -17,21 +17,27 @@ app.use(session({
     }
   }));
 
-  app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-app.use(cors({
-  origin: 'http://localhost:8080', // replace with the origin of your front-end
-  credentials: true
-}));
 
   const userRoutes = require('./routes/login');
   const examRoutes = require('./routes/exam');
+  const questionsRoutes = require('./routes/questions');
 
+  app.use(bodyParser.json());
   app.use('/users', userRoutes);
   app.use('/exam', examRoutes);
+  app.use('/questions', questionsRoutes);
+
 
   const port = 5000;
+
+  // Use the CORS middleware
+app.use(cors());
+
+// Middleware to parse incoming form data
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use(cors({ origin: 'http://localhost:8080' }));
 
 // Middleware to parse incoming form data
 

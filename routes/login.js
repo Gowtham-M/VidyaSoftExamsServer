@@ -10,12 +10,12 @@ router.use(cors({
   credentials: true
 }));
 
-const DestinationCandidate = require('../models/candidate')
+const Candidate = require('../models/candidate')
 
 router.get('/allUsers', async (req, res) => {
     try {
-        const users = await DestinationCandidate.find({});
-        return res.status(200).send(users);
+      const users = await Candidate.find({});
+      return res.status(200).send(users);
     } catch (error) {
       console.error('Error during login:', error);
       res.status(500).send({ message: 'Server error' });
@@ -23,6 +23,7 @@ router.get('/allUsers', async (req, res) => {
   });
 
   router.post('/login', async (req, res) => {
+    console.log('coming to router part..')
     try {
         console.log("req.body",req.body)
         const { exam_id, email, otp } = req.body;
@@ -35,8 +36,7 @@ router.get('/allUsers', async (req, res) => {
           return res.status(400).send({ message: 'Both exam_id and otp are required.' });
         }
 
-        const user = await DestinationCandidate.findOne({ exam_id:exam_id , email, otp});
-        console.log(user)
+        const user = await Candidate.findOne({ exam_id:exam_id , email, otp});
         if (!user) {
           return res.status(401).send({ message: 'Please Check Your credentials.' });
         }
@@ -61,7 +61,7 @@ router.get('/allUsers', async (req, res) => {
       console.log('session', req.session.userId)
       if (req.session.email) {
         // Assuming you have a method to find a user by ID
-        const user = await DestinationCandidate.findOne({user_id: req.session.userId})
+        const user = await Candidate.findOne({user_id: req.session.userId})
         res.json({ user: user });
       } else {
         res.status(401).send('No active session');
