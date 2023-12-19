@@ -21,11 +21,13 @@ app.use(session({
   const userRoutes = require('./routes/login');
   const examRoutes = require('./routes/exam');
   const questionsRoutes = require('./routes/questions');
+  const examResultRoutes = require('./routes/exam-results');
 
   app.use(bodyParser.json());
   app.use('/users', userRoutes);
   app.use('/exam', examRoutes);
   app.use('/questions', questionsRoutes);
+  app.use('/exam-results', examResultRoutes);
 
 
   const port = 5000;

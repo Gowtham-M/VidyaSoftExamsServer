@@ -3,12 +3,13 @@ const router = express.Router();
 const Question = require('../models/questions');
 const ExamResult = require('../models/exam-results');
 
-router.post('/exam-results', async (req, res) => {
+router.post('/insertcandidate', async (req, res) => {
     try {
+        console.log("req.body", req.body)
         const { exam_id, candidate_email } = req.body;
         candidate_questions = [];
         // Fetch all questions from the questions collection
-        const questions = await Question.find();
+        const questions = await Question.find({exam_id:exam_id});
 
         for (let question of questions) {
             candidate_questions.push({
@@ -36,5 +37,15 @@ router.post('/exam-results', async (req, res) => {
         res.status(500).json({ message: 'Failed to create exam result' });
     }
 });
+
+router.get('/fetchall', async (req, res) => {
+    try {
+        const examResults = await ExamResult.find();
+        res.status(200).json(examResults);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch exam results' });
+    }
+});
+
 
 module.exports = router;
