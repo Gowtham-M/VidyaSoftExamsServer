@@ -50,12 +50,52 @@ router.post('/insertCandidate', async (req, res) => {
     }
 });
 
+router.post('/submit', async (req, res) => {
+    try {
+        const { candidate_email, exam_id } = req.body;
+        await markExamAsSubmitted(candidate_email, exam_id);
+        if (req.session) {
+          req.session.destroy(err => {
+            if (err) {
+              return res.status(500).send('Error ending session');
+            }
+            res.clearCookie('connect.sid'); // Replace 'connect.sid' with your session cookie name
+            res.json({ message: 'Exam submitted successfully and session ended' });
+          });
+        } else {
+          res.json({ message: 'Exam submitted successfully' });
+        }
+      } catch (error) {
+        res.status(500).send('Error submitting exam');
+      }
+});
+
+  const markExamAsSubmitted = async (candidateId, examId) => {
+
+    const completeTime = Date.now();
+    const examStatus = 'submitted';
+    console.log('coming here to update exam status')
+    await ExamResult.updateOne(
+      { candidate_email: candidateId, exam_id: examId },
+      { $set: { completion_time: completeTime, exam_status: examStatus } }
+    );
+  };
+
 router.get('/fetchall', async (req, res) => {
     try {
         const examResults = await ExamResult.find();
         res.status(200).json(examResults);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch exam results' });
+    }
+});
+
+router.delete('/deleteAll', async (req, res) => {
+    try {
+        const result = await ExamResult.deleteMany();
+        res.send({ message: `${result.deletedCount} exam results have been deleted.` });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to delete exam results' });
     }
 });
 

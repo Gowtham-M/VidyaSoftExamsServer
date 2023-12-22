@@ -11,6 +11,7 @@ router.use(cors({
 }));
 
 const Candidate = require('../models/candidate')
+const ExamResult = require('../models/exam-results');
 
 router.get('/allUsers', async (req, res) => {
     try {
@@ -46,9 +47,16 @@ router.get('/allUsers', async (req, res) => {
           return res.status(401).send({ message: 'Please Check Your credentials.' });
         }
 
-        req.session.email = user.email;
-        // If login is successful, send a success response. You can also generate a token or set a session here.
-        return res.status(200).send({ message: 'Login successful.', user: user });
+        const exam = await ExamResult.findOne({ exam_id,  candidate_email: user.email});
+
+        const examSubmitted = exam && exam?.exam_status && exam.exam_status === 'submitted'
+
+        if (examSubmitted) {
+          return res.status(200).send({ examSubmitted: true });
+        } else {
+          req.session.email = user.email;
+          return res.status(200).send({ examSubmitted: false, message: 'Login successful.', user: user });
+        }
 
       } catch (error) {
         console.error('Error during login:', error);

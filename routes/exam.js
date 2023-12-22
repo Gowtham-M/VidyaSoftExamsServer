@@ -28,4 +28,16 @@ router.get('/exam-details', async(req, res) => {
     }
 });
 
+router.post('/update-exam-details', async(req, res) => {
+    try {
+        const { candidate_email, exam_id } = req.body;
+        await Exam.updateOne(
+            { candidate_email: candidate_email, exam_id: exam_id },
+            { $set: { duration: 5 } }
+          );
+    } catch(error) {
+        res.status(500).send({ message: 'Server error' });
+    }
+});
+
 module.exports = router
