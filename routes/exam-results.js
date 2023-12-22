@@ -24,10 +24,10 @@ router.post('/insertCandidate', async (req, res) => {
 
         for (let question of questions) {
             candidate_questions.push({
-                question_id: question.question_text,
+                question_id: question.question_id,
                 question_ans: question.correct_answer,
                 answer_given: '',
-                status: 'not answered'
+                status: 'not-answered'
             });
         }
         // Create a document in the exam-results collection
@@ -44,7 +44,7 @@ router.post('/insertCandidate', async (req, res) => {
 
         await examResult.save();
 
-        res.status(200).json({ startTime: Date.now(), message: 'Exam result created successfully' });
+        res.status(200).json({ startTime: Date.now(), attemptSummaryPanel: candidate_questions, message: 'Exam result created successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to create exam result' });
     }
@@ -99,7 +99,7 @@ router.delete('/deleteAll', async (req, res) => {
     }
   })
 
-router.put('/updateQuestionStatus', async (req, res) => {
+router.post('/updateQuestionStatus', async (req, res) => {
     try {
         const { exam_id, candidate_email, question_id, status, answer_given } = req.body;
         console.log(req.body)
