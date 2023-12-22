@@ -24,7 +24,7 @@ router.post('/insertCandidate', async (req, res) => {
 
         for (let question of questions) {
             candidate_questions.push({
-                question: question.question_text,
+                question_id: question.question_text,
                 question_ans: question.correct_answer,
                 answer_given: '',
                 status: 'not answered'
@@ -81,7 +81,7 @@ router.post('/submit', async (req, res) => {
     );
   };
 
-router.get('/fetchall', async (req, res) => {
+router.get('/fetchAll', async (req, res) => {
     try {
         const examResults = await ExamResult.find();
         res.status(200).json(examResults);
@@ -96,6 +96,32 @@ router.delete('/deleteAll', async (req, res) => {
         res.send({ message: `${result.deletedCount} exam results have been deleted.` });
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete exam results' });
+    }
+  })
+
+router.put('/updateQuestionStatus', async (req, res) => {
+    try {
+        const { exam_id, candidate_email, question_id, status, answer_given } = req.body;
+        console.log(req.body)
+
+        const result = await ExamResult.findOneAndUpdate(
+          { exam_id, candidate_email, "candidate_questions.question_id": question_id },
+          {
+            $set: {
+              "candidate_questions.$.answer_given": answer_given,
+              "candidate_questions.$.status": status
+            }
+          },
+          { new: true } // Returns the updated document
+        );
+
+        if (result) {
+          res.json({ message: 'Question updated successfully', updatedResult: result });
+        } else {
+          res.status(404).send('Exam result not found');
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update question status' });
     }
 });
 

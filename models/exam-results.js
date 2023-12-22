@@ -4,7 +4,7 @@ const examResultSchema = new mongoose.Schema({
     candidate_email: String,
     exam_id: String,
     candidate_questions: [{
-        question: String,
+        question_id: String,
         question_ans: String,
         answer_given: String,
         status: String
