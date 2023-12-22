@@ -47,5 +47,31 @@ router.get('/fetchall', async (req, res) => {
     }
 });
 
+router.put('/updatequestionstatus', async (req, res) => {
+    try {
+        const { exam_id, candidate_email, questionId, status } = req.body;
+        console.log(req.body)
+
+        // Find the exam result document by ID
+        const examResult = await ExamResult.findOne({ exam_id: exam_id, candidate_email: candidate_email });
+
+        if (!examResult) {
+            return res.status(404).json({ message: 'Exam result not found' });
+        }
+
+        // Find the question in the candidate_questions array and update its status
+        const question = examResult.candidate_questions.id(questionId);
+        if (question) {
+            question.status = status;
+            await examResult.save();
+            res.status(200).json(examResult);
+        } else {
+            res.status(404).json({ message: 'Question not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update question status' });
+    }
+});
+
 
 module.exports = router;
