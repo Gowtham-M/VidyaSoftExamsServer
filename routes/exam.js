@@ -11,6 +11,7 @@ router.use(cors({
 }));
 
 const Exam = require('../models/exam')
+const Topic = require('../models/topics')
 
 router.get('/exam-details', async(req, res) => {
     try {
@@ -26,6 +27,17 @@ router.get('/exam-details', async(req, res) => {
     } catch(error) {
         res.status(500).send({ message: 'Server error' });
     }
+});
+
+router.get('/exam-topics', async(req, res) => {
+    try {
+        const exam_id = req.query.exam_id;
+        const topics = await Topic.find({ exam_id }); // Fetch all topics
+        console.log('topics', topics)
+        res.json(topics);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
 });
 
 router.post('/update-exam-details', async(req, res) => {
