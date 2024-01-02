@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const Exam = require('../models/assessment-exams');
 const router = express.Router();
 const nodemailer = require('nodemailer');
 
@@ -98,6 +99,8 @@ router.post('/submit', async (req, res) => {
                   console.log('Email sent:', info.response);
                 }
               });
+
+              
             })
             .catch(scoreError => {
               console.error('Error calculating score:', scoreError);
@@ -140,6 +143,14 @@ router.post('/submit', async (req, res) => {
       examResult.score = score;
       await examResult.save();
       console.log('returning score..')
+
+      // Update the marks scored in the exam collection
+      console.log('subbmitting score to assessment exam collection')
+      x = await Exam.findOneAndUpdate(
+        { 'invitees.email': candidate_email },
+        { $set: { 'invitees.$.marksScored': score} }
+      );
+      console.log('x', x)
       return score; // Return the calculated score
     } catch (error) {
       throw error; // Rethrow any errors for handling in the calling code
