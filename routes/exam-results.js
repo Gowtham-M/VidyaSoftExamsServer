@@ -100,7 +100,7 @@ router.post('/submit', async (req, res) => {
                 }
               });
 
-              
+
             })
             .catch(scoreError => {
               console.error('Error calculating score:', scoreError);
@@ -145,12 +145,22 @@ router.post('/submit', async (req, res) => {
       console.log('returning score..')
 
       // Update the marks scored in the exam collection
-      console.log('subbmitting score to assessment exam collection')
-      x = await Exam.findOneAndUpdate(
-        { 'invitees.email': candidate_email },
-        { $set: { 'invitees.$.marksScored': score} }
+      console.log('exam id', exam_id)
+      console.log('email', exam_id)
+      console.log('score', score)
+
+      const result = await ExamResult.findOne({ exam_id: exam_id, candidate_email: candidate_email });
+      const timeSpent = result.completion_time.getTime() - result.start_time.getTime();
+      const timeSpentInMinutes = Math.floor(timeSpent / 60000);
+
+      console.log('time spent in min', timeSpentInMinutes)
+
+      await Exam.findOneAndUpdate(
+        { exam_id: exam_id, 'invitees.email': candidate_email },
+        { $set: { 'invitees.$.marksScored': score, 'invitees.$.timeSpent': timeSpentInMinutes, 'invitees.$.status': 'submitted' } },
+        { new: true }
       );
-      console.log('x', x)
+      // console.log('x', x)
       return score; // Return the calculated score
     } catch (error) {
       throw error; // Rethrow any errors for handling in the calling code
