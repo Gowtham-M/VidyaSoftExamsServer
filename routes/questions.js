@@ -23,4 +23,43 @@ router.get('/exam-questions', async(req, res) => {
     }
 });
 
+
+// Route to get questions grouped by topic for a specific exam
+router.get('/exam-questions-by-topic', async (req, res) => {
+    const examId = req.query.exam_id;
+
+    try {
+        const aggregatedQuestions = await Question.aggregate([
+            {
+                $match: { exam_id: examId } // Filter the questions by exam_id first
+            },
+            {
+                $group: {
+                    _id: "$topic_name", // Group by the topic name
+                    questions: {
+                        $push: { // For each group, create an array of questions
+                            question_text: "$question_text",
+                            options: "$options",
+                            // Include any other question fields you need here
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0, // Suppress the _id field
+                    topic_name: "$_id", // Rename the _id field to topic_name
+                    questions: 1 // Include the questions array
+                }
+            }
+        ]);
+
+        // Send the response back
+        res.json(aggregatedQuestions);
+    } catch (error) {
+        console.error('Error fetching questions grouped by topic:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 module.exports = router
